@@ -1,0 +1,81 @@
+# spring mvc
+1. 첫화면 로딩
+	1) controller 선언
+		springweb/a01_start/A01_StartController.java
+	2) view단 선언
+		springweb\src\main\webapp\WEB-INF (보안폴드)
+		하위 views 폴드 생성
+		springweb\src\main\webapp\WEB-INF\views\a01_startView.jsp
+	3) container에 등록(dispatcher-servlet.xml)
+		<baan class="springweb.a01_start.A01_StartController"/>
+		추후, 자동 등록처리 옵션 설정.
+		
+2. 컨트롤러 선언(A01_StartController.java)
+	1) 클래스명 위에 annotation 선언 @Controller
+	2) 기능 메서드 별로 url pattern 선언 및 view단 호출
+		// http://localhost:7080/springweb/start.do
+		@RequestMapping("/start.do")
+		public String start(){
+			// 처리할 controller 내용.
+			
+			return "WEB-INF\views\a01_startView.jsp";
+			// view단 호출(forward방식)
+		}
+		
+# 요청값과 모델 데이처 처리
+1. 요청값은 controller의 메서드의 매개변수로 처리할 수 있다.
+	1) url : /call01.do?name=홍길동&age=25 ==> get 방식
+		url : /call01.do ==> post 방식
+		: query string, form 하위 속성 name/value :
+						<form action="call01.do" method="get/post"
+						<input name="name" value="홍길동"
+						<input name="age" value="25"
+		get방식 : url에 요청값을 보이게 처리하고, 전송 데이터 한계가 있음.
+		post 방식 : url에서 요청값을 보이지 않게 하고, 전송 데이터 한계가 없음.
+						
+	2) @RequestMappint("call01.do")
+		public String call01(@RequestParam("name") String name,
+							@RequestParam("age") int age
+							){
+			// 요청값을 처리하되, 요청값의 이름을 @RequestParam("name")형태로 선언해서 처리한다.
+			System.out.print("이름:"+name)
+			System.out.print("나이:"+age)
+		}
+		# 주의!!!
+		- 요청값을 받지 못하게 처리 되는 경우 : 404에러..
+		get방식으로 요청값 없이 위 메서드 호출하면 에러 발생.	
+		/ call01.do
+		==> 요청값이 있으면 요청값을 받아서 처리하고, 없으면 일단 default로 처리하는 방법
+		public String call02(
+				@RequestParam(value="pname",defaultValue = "") String pname,
+				@RequestParam(value="price", defaultValue = "0") int price,
+		- 단 default 값을 설정하더라도 숫자형 데이터는 숫자형으로 형변환될 문자열을
+		query string으로 선언하지 않으면, 404 에러 발생	
+		ex) /call01.do?name=홍길동&age=이십오(x)
+		
+2. 요청값을 객체로 매개변수 받아서 처리 useBean
+	1) url : empList.do?name=홍길동&job=사원
+	2) 위의 요청값을 받기 위해서 매개변수로 설정된 클래스 안에 다음 같은 메서드가 property로 선언 되어 있으면 된다.
+		class Emp{ // 클래스명과는 상관이 없음.
+		
+		public void setEname(String ename){
+			// setEname ==> Ename ==> ename(set property)
+			// getEname ==> Ename ==> ename(get property) ${emp.ename}
+		}	
+	3) 요청값의 key=value에 key가 set property와 동일하고, 데이터 유형이 매개변수로 할당이 가능할 때, 
+		자동으로 객체에 할당이 된다.
+		핵심) 객체 이름이 중요한것이 아니고, 객체가 가지고 있는 메서드 setxxxx()가 어떻게 
+			아래의 규칙으로 선언이 되어있는가가 문제이다.
+	**404에러 나올시 체크!**	
+		ex) job=사원
+		public void setJob(String job) (o)
+		public void setJob1(String job) (x) key가 다름
+		public void setJob(int job) (x)	// int job = Integer.parseInt("사원");(x)
+		public void setJob(double job) (x)
+		
+		ex) sal=3000 "3000"
+		public void setSal(String sal) (o)	// String sal = "3000";
+		public void setSal1(String sal) (x)		
+		public void setSal(Double sal) (o)	// double sal = Double.parseDouble("3000")
+		public void setSal(int sal) (o)	// int sal = Integer.parseInt("3000")
+		

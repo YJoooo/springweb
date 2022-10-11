@@ -1,0 +1,106 @@
+# spring boot 설치 및 환경 구성
+1. spring sts download(윈도우버전)
+2. c:\a01_javaexp\ 폴드에 복사
+	파일명 변경 sts.jar
+3. c:\a01_javaexp\stsworkspace 만들기
+4. cmd 창에서 명령어 처리
+	java -jar sts,jar
+5. c:\a01_javaexp\sts-4.15.3.RELEASE\ 가 생성
+	SpringToolSuite4.exe 실행하고, workspace는 c:\a01_javaexp\stsworkspace로 처리한다.
+# sts 이클립스에서 필요로 하는 환경 설정
+1. 이클립스 마켓플레이스
+	eclipse web developer tools 3.25
+	- html, css, js 파일 생성 및 기본 html 코드 화면 로딩
+2. 한글 encoding
+	1) workspace 인코딩
+	2) html, css 파일 인코딩
+3. 기본 template 파일 정리 및 설정
+	1) html 파일을 vue/bootstrap 설정환경이 된 template로 설정.
+# 스프링 프로젝트 생성 및 경로 설정
+1. file ==> new ==> spring starter project
+2. 프로젝트 정보 설정
+	1) name : 프로젝트명
+	2) type : gradle project
+		lib나 기본 환경을 처리하는 툴을 다운로드
+	3) group : com.web
+		package : com.web.project
+	4) spring project dependencies
+		gradle로 온라인상 다운 받은 내용 선언
+		spring web
+		oracle driver
+		mybatis framework
+# 주요 파일 및 폴드 구성
+1. bulid.gradle
+	온라인상 다운 받을 lib를 설정부분
+2. src\main\resources\application.properties
+	container 상의 서버정보 설정
+	- web 서버 port
+	- db 접속 정보 : ip, port, sid, 계정, 비밀번호
+	- 파일 서버 정보/메일서버정보
+	- mybatis 서버 경로 정보 설정.
+3. src\main\java\
+	하단의 웹 서버를 통해서 시작해도 되고, 이 파일을 통해서 시작할 수도 있는 웹 서버 기동 클래스
+4. com.example.web.configuration
+	추가적인 설정 처리는 선언하는 클래스 선언
+	- mybatis, view단 설정 등
+	- 보안 설정
+5. src\main\resources
+	공통 설정 파일들
+	1) view
+		src\main\resources\templates
+			주로 화면에서 model(controller)통해서 넘겨주는 데이터가 있는 파일들을 위치
+		src\main\resources\static
+			css/img/js
+			html(화면변경없는)
+	2) mybatis
+6. 기타 backend 처리 파일
+	controller
+	json 데이터를 처리하는 controller
+		상단 annotation 선언과
+		메서드는 실제 리턴할 객체를 선언해주면, java의 객체 ==> json 
+	service
+	dao : 주의!
+		@Mapper
+		public interface EmpDao
+	vo
+										
+# 프로젝트 기본 환경 설정.
+1. gradle lib 환경 설정
+2. 서버 port, DB 연동
+	main\resource\application.properties
+	#서버포트지정(웹)
+	server.port=5080
+	#DB정보
+	spring.datasource.url=jdbc:oracle:thin:@localhost:1521:xe
+	spring.datasource.username=scott
+	spring.datasource.password=tiger
+	spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDrive
+	#mybatis
+	mybatis.mapper.locations=classpath:mybatis/mapper/**.xml
+# front단 설정 파일
+	template : 로딩한 html 파일
+	static : 공통적인 js/css/html 파일 설정 부분 폴드 지정
+	MvcConfiguration.java를 통해 설정
+# mybatis 설정 파일 지정
+	MybatisConfig.java
+		SqlSessionTemplate
+	공통 Myvatis설정
+	src/main/resource/mybatis
+		mapper
+			empMapper.xml
+		mybatis.Spring.xml
+# 개발 순서
+1. 프로젝트 생성, 사용하게 될 lib 선언
+	- gradle 환경
+	- jdbc, spring web, mybatis
+2. 기본 정보 설정
+	main\resource\application.properties
+	서버 port, DB연동
+3. config 설정 파일 선언
+	mybatis 및 view단에 대한 선언 설정
+4. 초기 화면 로딩.
+	1) template 하위에 초기화면 html 파일 호출
+	2) controller 생성.
+								
+	 
+

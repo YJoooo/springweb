@@ -1,0 +1,59 @@
+2022-07-15
+오전 정리문제
+[1단계:개념] 1. jquery에서  한번에 여러가지 css 속성을 설정하는 방법을 기술하세요
+  	$( "#test" ).css( {'background-color':'red', color:'blue' } );
+[1단계:확인] 2. jquery에서  each 구문을 통한 객체형 배열 처리의 매개변수을 값을 활용하여, 학생들의 이름/국어/영어/수학 점수를 테이블에 출력하세요
+	<input type="button" id="point">
+[1단계:개념] 3. jquery에서 ajax 처리를 위한 속성값을 기술하세요
+	$.ajax({속성:속성값,.....})
+	1) url
+	2) data
+	3) type
+	4) dataType
+	5) success
+	6) error
+	
+[1단계:확인] 4. 아래의 내용을 처리하는 서버단 ajax controller을 메서드를 선언하세요 
+            1) http://localhost:7080/springweb/ajax11.do?name=홍길동&height=175.5&weight=68.5
+               화면출력 {"p01",{"name":"홍길동","height":175.5,"weight":68.5}}
+               
+            2) http://localhost:7080/springweb/ajax12.do?radius=50.2
+               화면출력 {"circle":{radius:50.2,dimension:7912.92}}
+               
+[1단계:확인] 5. 아래 내용을 ajax 통해 controller에서 모델 값을 처리를 통해서 입력과 동시에 출력되게 하세요
+            물건명 :[    ] 가격:[     ] 수량:[     ]
+            ==> @@을 @@@원에 @@게 구매하여 총비용이 @@@ 원입니다.
+            
+    @RequestMapping("product.do")
+	public String product(Product pro, Model d) {
+		int tot=pro.getPrice()*pro.getCnt();
+		d.addAttribute("result", pro.getPname()+"을 "+pro.getPrice()+"원에 "+pro.getCnt()+
+						"개 구매하여 총비용이 "+tot+"원입니다.");
+		return "pageJsonReport";
+	}
+	
+	      $(".sch").keyup(function(){
+     	 var pnameVal = $("[name=pname]").val() 
+     	 var priceVal = $("[name=price]").val() 
+     	 var cntVal = $("[name=cnt]").val() 
+ 		// $("h2").text("ename="+enameVal+"&job="+jobVal)
+     	 $.ajax({
+     		 url:"${path}/product.do",
+     		 data:"pname="+pnameVal+"&price="+priceVal+"&cnt="+cntVal,
+     		 dataType:"json",
+     		 success:function(data){
+     			 // data.모델명 : m.addAttribute("empList", ser...)
+     			 var list = data.result
+     			 var addHTML=""
+     			 $(list).each(function(idx, product){ // 변수명이 중요하지 않고, 순서.
+     				 addHTML+="<tr><td>"+product.pname+"</td><td>"+product.price+
+     				 "</td><td>"+product.cnt+"</td></tr>"
+     			 });
+     		 console.log(addHTML)
+     		 $("#result").html(addHTML)
+     		 }
+     	 }) 
+  
+       });
+	
+            

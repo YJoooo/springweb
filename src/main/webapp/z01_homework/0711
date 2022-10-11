@@ -1,0 +1,73 @@
+2022-07-11
+[1단계:개념] 1. mybatis와 단일 매개변수와 다중매개변수를 처리하는 방식을 기술하세요.
+		#{} --> service 단에서 대입
+		#{} --> vo에 생성자로 매개변수 초기화 후 배열로 service 단에서 대입
+[1단계:개념] 2. map으로 매개변수 처리할 때, Map의 기본 기능과 mybatis에서 처리하는 방식을 기술하세요.
+		map() 함수는 모든 배열의 값에 Function을 실행하는 Method이다.
+		- sql
+		- dao
+		- mapper : map은 string과 동일하게 내장되어 지원한다.
+		- service : map객체에 값 할당
+[1단계:개념] 3. mybatis에서 조건절 처리에 대한 기본 형식을 기술하세요.
+		<if test="? == null"> 조건절 </if> 
+[1단계:확인] 4. 아래의 sql을 mybatis를 활용하여 처리하세요.
+      1) 직책을 입력하여 직책의 평균급여를 직책과 함께 데이터 가져옮
+      	- sql
+	      	SELECT round(AVG(sal)) sal
+			FROM emp
+			WHERE job = #{job}
+			group by job
+		- dao
+			public Emp getAvgSalJob(String job);
+		- mapper
+			<select id="getAvgSalJob" resultType="emp" parameterType="string">
+		      	SELECT round(AVG(sal))
+				FROM emp
+				WHERE job =#{job}
+			</select>
+		- service	
+      		Emp jobEmp = dao2.getAvgSalJob("MANAGER");
+      		if(jobEmp!=null) System.out.println(jobEmp.getEmpno()+":"+
+      			jobEmp.getEname());
+      2) 급여의 범위(시작/마지막)을 지정하여 사원 정보를 가져오기
+       map? vo? : vo를 쓰는 경우, 이후에 재활용을 하고, 테이블과 mapping되는 property인 경우
+       			map을 쓰는 경우, 테이블에 있는 property가 아니고, 사용도 이 경우에만 활용된 경우
+       			
+       
+        - sql
+			select
+			from emp
+			where sal between #{start}and#{end}
+		- dao
+			public List<Emp> getSalSch(Map map);
+		- mapper
+			<select id ="getSalSch" resultType="emp" parameterType="hashMap">
+				select *
+				from emp
+				where sal between #{start}and#{end}
+			</select>
+		- service
+			Map<String, Double> salmap = new HashMap<String,Double>()
+			salmap.put("start",1000)	
+			salmap.put("end",3000)	
+      		System.out.println("검색된 사원의 건수(1000~3000)"+dao2.getSalSch(salmap).size());
+      3) salgrade테이블의 정보를 입력 처리
+        - sql
+			INSERT INTO salgrade01 values(#{grade},#{losal},#{hisal})
+		- vo작성
+			class Salgrade{
+				private int grade;
+				private double losal;
+				private double hisal;
+			}
+		- dao
+			public void insertSalgrade(Salgrade ins);
+		- mapper
+		<insert id="insertSalgrade" parameterType="salgrade">
+			INSERT INTO salgrade01 values(#{grade},#{losal},#{hisal})		
+		</insert>
+		- service	
+			System.out.println("#사원 정보 등록#");
+			dao2.insertSalgrade(new Salgrade(7,5001,6000));
+		
+      

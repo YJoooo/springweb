@@ -1,0 +1,178 @@
+2022-07-06
+[1단계:개념] 1. 스프링에서 컨테이너에 특정한 패키지의 자동 객체 설정을 처리할 때, 처리할 내용을 기술하세요
+	1) vo 클래스 생성 - @Component @Autowired import
+	2) java파일 생성 - set 데이터 할당 / 출력
+	3) xml파일 생성 - <context:component-scan base-package="vo객체 위치"/>
+
+[1단계:확인] 2. 스프링 컨테이너에 z10_vo 패키지에 클래스를 등록하여, 1:1연관관계가 있는 펜과 종이 객체를 선언하고,
+      코드상 자동 설정관계가 있게 처리하고 호출하세요
+    // Pen
+    package a01_diexp.z10_vo;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Pen {
+	private String kind;
+	private int price;
+	private String color;
+	public Pen() {
+		// TODO Auto-generated constructor stub
+	}
+	public Pen(String kind, int price, String color) {
+		super();
+		this.kind = kind;
+		this.price = price;
+		this.color = color;
+	}
+	public String getKind() {
+		return kind;
+	}
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	
+}
+    
+    // Paper
+    package a01_diexp.z10_vo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Paper {
+	private String size;
+	@Autowired
+	private Pen pen;
+	public Paper() {
+		// TODO Auto-generated constructor stub
+	}
+	public void write() {
+		System.out.println(size+"사이즈 종이에");
+		if(pen!=null) {
+			System.out.println(pen.getPrice()+"원 짜리"+pen.getColor()+pen.getKind()+"으로 그림을 그렸다.");
+		}else {
+			System.out.println("그림 그릴 펜이 없다.");
+		}
+	}
+	public Paper(String size) {
+		super();
+		this.size = size;
+	}
+	public String getSize() {
+		return size;
+	}
+	public void setSize(String size) {
+		this.size = size;
+	}
+	public Pen getPen() {
+		return pen;
+	}
+	public void setPen(Pen pen) {
+		this.pen = pen;
+	}
+	
+	
+}
+    
+    // DIExp27.java
+    Pen pen = ctx.getBean("pen",Pen.class);
+		System.out.println(pen);
+		pen.setKind("색연필");
+		pen.setPrice(7000);
+		pen.setColor("노란색");
+		Paper paper = ctx.getBean("paper",Paper.class);
+		System.out.println(paper);
+		paper.setSize("A4");
+		paper.write();
+		ctx.close();
+				
+    // di27.xml 
+    <context:component-scan base-package="a01_diexp.z10_vo"/>
+    
+    // console 결과 :   
+    A4사이즈 종이에
+	7000원 짜리노란색색연필으로 그림을 그렸다.
+      
+[1단계:확인] 3. 공통 설정 파일을 java 폴드 밑에 msg/msg01로 설정하고, 좋아하는 음악, 가수를 설정하고,
+      이를 vo로 만들어 호출되게 처리하여 출력결과를 확인하세요.
+      // DIExp27.java
+      Music music = ctx.getBean("music",Music.class);
+		System.out.println(music.getMname());
+		System.out.println(music.getSinger());
+		music.song();
+		ctx.close();
+      // di27.xml 
+        <context:component-scan base-package="a01_diexp.z10_vo"/>
+      <context:property-placeholder location="classpath:/msg/msg01"/>
+      <bean id="music" class="a01_diexp.z10_vo.Music">
+      <constructor-arg value="${music.mname}"/>
+      <constructor-arg value="${music.singer}"/>
+      </bean>
+      // Music
+      package a01_diexp.z10_vo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Music {
+	@Value("${music.mname}")
+	private String mname;
+	@Value("${music.singer}")
+	private String singer;
+	public Music() {
+		// TODO Auto-generated constructor stub
+	}
+	public void song() {
+		System.out.println(singer+"의 타이틀 곡은 "+mname+"입니다.");
+	
+	}
+	public Music(String mname, String singer) {
+		super();
+		this.mname = mname;
+		this.singer = singer;
+	}
+	public String getMname() {
+		return mname;
+	}
+	public void setMname(String mname) {
+		this.mname = mname;
+	}
+	public String getSinger() {
+		return singer;
+	}
+	public void setSinger(String singer) {
+		this.singer = singer;
+	}
+
+}
+      
+      // msg01
+    	music.mname=goodday
+		music.singer=iu
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      

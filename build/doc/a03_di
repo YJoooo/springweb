@@ -1,0 +1,132 @@
+# DI(dependency injection)
+1. spring framework에서 사용되는 컨테이너에서 처리되는 개념이다.
+	스프링 프레임웍의 핵심 개념으로 이에 대한 이론과 실제 처리 방법을 알면, 
+	스프링의 환경 설정과 객체 사용에 대한 명확한 기준을 정립하고 활용할 수 있게 된다.
+2. 지식계열화(di를 이해하고 사용하기 위해 단계로 알아야 할 개념)
+	1) 스프링에서의 객체 사용 메커니즘
+		만능키트 ==> 스프링에서 핵심 객체는 컨테이너 메모리에 올려서 호출하는 식으로 사용한다.
+		주소 ==> 웹서버 ==> web.xml ==> 컨테이너 호출(dispatcher-servlet.xml)
+		==> 객체 메모리 로딩 ==> 그 주소에 mapping controller, 메서드 호출 ==> 
+		model ==> view
+		
+	2) IOC(Inversion of Controller) 이해
+		제어권의 역전이란, 객체의 생성, 생명주기의 관리까지 모든 객체에 대한 제어권이 바뀌었다는 것을 의미한다.
+		컴포넌트 의존 관계 결정, 설정 및 생명주기를 해결하기 위한 디자인 패턴을 말한다.
+		스프링 프레임워크도 객체에 대한 생성 및 생명주기를 관리 할 수있는 기능을 제공하고 있음.
+		즉, IOC 컨테이너 기능을 제공한다.
+		IOC 컨테이너는 객체의 생성을 책임지고, 의존성을 관리(Controller ==> dao)한다.
+		POJO(plain old java object)의 생성, 초기화, 서비스, 소멸에 대한 권한을 가진다.
+		개발자들이 직접 pojo를 생성할 수 있지만 컨테이너에게 맡긴다.
+		
+	3) IOC에서 파생하는 개념들
+		DL(Dependency lookup) 저장소에 저장되어있는 bean에 접근하기 위해 컨테이너가 제공하는 api를 이용하여
+		bean을 lookup 하는 것
+	4) DI 개념 : 각 클래스간의 의존관계를 빈 설정 정보를 바탕으로 컨테이너가 자동으로 연결해주는 것
+		- setter injection
+		- constructor injection
+		- method injection
+		
+	5) 스프링 컨테이너 활용 연습(xml ==> java)	
+		웹서버가 로딩될 때, 컨테이너를 활용해서 웹프로그램 처리.
+		간단하게 java mail()에 실행 환경도 컨테이너 활용을 연습할 수 있게 만듦.
+		.xml(컨테이너) ==> java클래스 선언 후, xml로 객체가 생성되게 처리, 기능 메서드(property)를 통해서 데이터 할당 ==>
+		이 컨테이너르 java단에서 호출하여, 실제 객체가 컨테이너에서 어떻게 메모리를 할당하고 사용되는지를 확인.
+		//ex) DIExp12,java, d12.xml 생성
+		//		Product vo 생성 물건명 가격 갯수 선언 xml에 property로 할당 출력..
+			1) Product 클래스 선언 필드로 물건명, 가격, 갯수 선언.
+			2) d12.xml 커네이ㅓ에서 객체를 생성하고 데이터 할당, id로 외부에서 호출할 수 있게 선언.
+			3) DIExp12.java 에서 id로 객체를 호출하여 main()에서 해당 객체가 생성 및 데이터 저장 내용을 
+				getXXXX()메서드를 통해서 확인.
+# 객체와 객체의 의존 관계 설정
+1. 클래스 구조 선언
+	1) HandPhone 번호 제조사
+	2) HPerson 이름 HandPhone show()
+	
+2. 컨테이너에서 설정 관계
+	1) 직접적으로 객체와 객체의 연관관계를 설정.
+		HandPhone 선언
+		HPerson 선언
+			property로 위에 선언한 HandPhone 객체가 할당하게 선언.
+	2) HPerson autowire를 선언하여, 속성에따라
+		byType : 컨테이너에 해당 타입이 선언되어 있으면 할당 
+		byName : 컨테이너에 해당 타입이 선언되어 있고 할당할 객체의 id와 set 프로퍼티가 동일할 때 할당 처리
+3. 컨테이너 + 클래스 선언을 통한autowire 선언
+	1) 컨테이너에선 객체만 생성되게 하고,
+	2) 클래스를 선언할 때, autowiring이 필요할 부분에 대하여 , @(어노테이션)을 이용해서 autowiring 선언.		
+				 				
+# Autowired(자동 주입 설정)
+1. 스프링의 빈의 요구 사항과 매칭 되는 애플리케이션 컨텍스트상에서 다른빈을 찾아 
+빈간의 의존성을 자동으로 만족시키도록 하는 수단이다.
+2. 의존성 자동 주입 설정 옵션
+	1) no: 의존성 자동 주입이 일어나지 않게 설정
+	2) byType : 할당할 type(객체)가 있으면 자동으로 주입되게 처리한다
+	3) byName : type이 있고 기능 메서드명이 객체의 참조명과 같을 때 처리된다.
+	4) constructor : 의존성 자동 주입이 생성자의 매개변수의 type으로 결정된다.
+	5) autodectect : 자동으로 생성자나 기능 property로 설정이 된다.	
+# 컨테이너의 자동 객체 로딩
+1. 컨테이너 선언에 있어서 특정 패키지를 지정하여, 해당 범위에 있는 클래스를 
+	특정한 패턴에 의해서 객체로 로딩하게 처리할 수 있다.	
+2. 처리순서
+	1) 패키지 단위 로딩하고자 하는 클래스 선언
+	2) 컨테이너(@@.xml)에서 특정 패키지를 지어하여, 포함된 클래스를 filtering 방식을 선언하여 객체 선택 처리
+	3) 속성값
+		base-package
+		context:include-filter : filter 기준으로 설정하는 내용(포함)
+		context:exclude-filter : filter 기준으로 배제하는 내용
+		type : filter 태상에 대한 type 지정 ex) annotation, regex
+		expression : 실제 쓰이는 대상이 되는 클래스 선언
+		
+3. 호출처리
+	1) 각 클래스에 @Component를 선언하면 클래스명의 첫번째 문자는 소문자로 하여 id/name으로 인식하여 처리가 된다.
+	2) 위 식별자는 @Component("식별자명") 으로 변경하여 처리할 수 있다.
+		일반적으로 패키지가 다르지만 동일한 클래스명으로 하나의 컨테이너에 식별자가 충돌이 나는 경우
+		이렇게 명시적으로 식별자명을 바꾸어서 처리가 가능하다.
+4. 소스상 자동 autowiring 처리
+	1) 위와 같이 Component가 선언되어 있을때, 여러가지 특정한 코드를 통해 필드나
+		기능 메서드의 상단에 @Autowired라는 키워드를 통해서 객체간의 자동으로 메모리가 할당하게 할 수 있다.
+	2) 컨테이너에서 autowire 옵션으로 위에 선언된 여러가지 옵션을 선언할 필요없이, 바로 추가되는
+		클래스에서 선언하여 객체를 자동으로 할당되게 한다.
+	3) 실무적으로 MVC패턴에서 Controller는 Service 객체를 Service객체는 
+		Dao 객체를 필드로 선언하면서 @Autowired 옵션으로 new XXXX() 없이 객체가
+		컨테이너에 로딩된 메모리를 사용할 수 있게 해준다.	
+		- @Autowired(required=false)
+			기본 default 옵션이 required=true이며 이것을 컨테이너에 객체가 생성되어있지 않으면 에러가 발생한다.			
+			이를 막기 위해 required=true를 통해 해당 객체가 생성되어 있지 않더라도 에러를 발생하지 않게 해준다.
+					
+# 공통 정보 처리 파일 설정
+1. 개발에 있어서 공통으로 적용될 정보는 특정한 DB나 파일로 설정해서 처리하면, 
+	이 공통 적용 DB나 파일만 변경되면 모든 소스에 검색해서 변경하지 않더라도 한번에 변경이 가능하다.
+	ex) 로컬 서버 정보(DB서버, WAS서버 등, 파일서버, 메일서버 등)에서 개발 서버/테스트 서버/운영서버 등으로 변경시.
+2. 설정 순서
+	1) 특정경로 파일로 설정 파일 생성 및 정보 기록
+		- 일반적으로 classpath로 잡힌 java 폴드 하위에 경로와 파일에 정리한다.
+	2) 	컨테이너에서 해당 경로의 파일을 지정.
+		<context:property-placeholder location="classpath:/폴드명/파일명">
+		파일내용
+		jdbc.driver=jdbc.odbc.driver.driverName
+		oracle.account=scott
+		oracle.pass=7777
+		fileupload=c:\\gogo\\fileupload\\
+	3) 컨테이너에서(@.xml) 해당 객체의 설정값 지정
+		${key} : 위 파일에 지정된 key
+		ex) ${jdbc.driver}
+	4) 각 소스 파일에서 해당 설정값 지정 및 호출
+		@Value("${key}")
+		private String info01;
+		
+		ex) @Value("${fileupload}")
+			private String reposit; // 공통 설정파일에 지정된 경로가 문자열로 할당.
+				
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		 	
+	

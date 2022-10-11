@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/springweb/a00_com/bootstrap.min.css" >
+<style>
+	td{text-align:center;}
+</style>
+<script src="/springweb/a00_com/jquery.min.js"></script>
+<script src="/springweb/a00_com/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://developers.google.com/web/ilt/pwa/working-with-the-fetch-api" type="text/javascript"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var vm = new Vue({
+			el:".container",
+			data:{msg:"시작!!(뷰와함께)",
+				stuList:[
+					{name:"홍길동",kor:"80",eng:"80",math:"40"},
+					{name:"안유진",kor:"90",eng:"50",math:"50"},
+					{name:"이영지",kor:"100",eng:"90",math:"50"},
+					{name:"미미",kor:"60",eng:"60",math:"90"}
+				]
+			}
+		});	
+		// ex) 모델 데이터로 학생명 국어 영어 수학 객체를 가진 students 객체형 배열을 선언하고
+		//	아래에 테이블에 출력되게 처리하세요.
+		
+	});
+</script>
+</head>
+<body>
+
+<div class="container">
+	<div class="jumbotron text-center">
+	  <h2 >{{msg}}</h2>
+	</div>
+	<form id="frm01" class="form-inline"  method="post">
+  	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+	    <input class="form-control mr-sm-2" placeholder="제목" />
+	    <input class="form-control mr-sm-2" placeholder="내용" />
+	    <button class="btn btn-info" type="submit">Search</button>
+ 	</nav>
+	</form>
+   <table class="table table-hover table-striped">
+   	<col width="10%">
+   	<col width="20%">
+   	<col width="10%">
+   	<col width="10%">
+   	<col width="10%">
+   	<col width="20%">
+   	<col width="20%">
+    <thead>
+    
+      <tr class="table-success text-center">
+        <th>번호</th>
+        <th>이름</th>
+        <th>국어</th>
+        <th>영어</th>
+        <th>수학</th>
+        <th>총점</th>
+        <th>평균</th>
+      </tr>
+    </thead>	
+    <tbody>
+    	<tr v-for="(stu, idx) in stuList">
+    	<td>{{idx+1}}</td>
+    	<td>{{stu.name}}</td>
+    	<td>{{stu.kor}}</td>
+    	<td>{{stu.eng}}</td>
+    	<td>{{stu.math}}</td>
+    	<td>{{parseInt(stu.kor)+parseInt(stu.eng)+parseInt(stu.math)}}</td>
+    	<td>{{(parseInt(stu.kor)+parseInt(stu.eng)+parseInt(stu.math))/3.0}}</td>
+    	</tr>
+    </tbody>
+	</table>       
+</div>
+</body>
+</html>

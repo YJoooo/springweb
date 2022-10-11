@@ -1,0 +1,52 @@
+2022-07-12
+[1단계:개념] 1. 스프링 초기화면 요청값 처리하는 방식과 모델 처리방식을 기술하세요
+
+[1단계:개념] 2. 스프링에서 화면과 함께 하는 MVC의 전체적인 흐름을 핵심 코드 위주로 설명하세요.
+[1단계:확인] 3. 현재 만들어진 dao(DaoExp01)를 기준으로 화면을 만들어 요청값과 모델 데이터를 처리하세요
+         1) 사원번호로 상세 사원정보 검색
+	         - sql
+	         	select * 
+	         	from emp
+	         	where empno= #{empno}
+	         - vo
+	         - mapper
+			    <select id="" resultType="" parameterType="">
+					SELECT *
+					FROM emp WHERE 1=1
+					<if test="job!=null">
+					AND job LIKE '%'||#{job}||'%'
+					</if>
+				</select>
+	         - service
+         2) 직책으로 평균 급여 검색
+	         - sql
+	         	<select id="" resultType="" parameterType="">
+					SELECT job, round(avg(sal))
+					FROM emp WHERE 1=1
+					<if test="job!=null">
+					AND job LIKE '%'||#{job}||'%'
+					</if>
+					group by job
+				</select>
+	         - vo
+	         - mapper
+	         - service
+         3) 부서번호를 기준으로 부서번호와 최고 급여 출력
+	         - sql
+	         	<select id="" resultType="" parameterType="">
+					SELECT deptno, max(sal)
+					FROM emp
+					where deptno= #{deptno}
+					gruop by deptno
+				</select>
+	         - vo
+	         - mapper
+	         - service
+	     1) database 처리 dao완료
+	     2) controller에 초기 화면 처리.
+	     	url : 메서드/jsp - 요청값  name="empno" name="job" name="deptno"
+	     3) service : dao메서드 기준
+	     4) controller 처리 화면 기준으로 메서드 생성...
+	     	model설정
+	     5) view(모델 데이터 처리)		
+	     3)     

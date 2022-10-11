@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="springweb.a02_mvc.a03_dao.EmpDao">
+	<select id="getEmpList" resultType="emp"
+		parameterType="emp">
+		SELECT *
+		FROM emp
+	
+	</select>
+<!--
+//springweb.a02_mvc.a03_EmpDao(인터페이스)
+1. 인터페이스명과 namespace의 명을 동일하게.. XXXMapper.xml ===XXXDao
+public interface EmpDao {
+	public List<Emp> getEmpList(Emp sch); (추상메서드)
+	//3. 리턴할 데이터 유형 List<EMP> == resultType
+	//4. 매개변수의 데이터 유형(Emp sch) == parameterType
+2. 기능메서드와 sql을 가지고 있는 mapper의 id명과 연결	
+	public void insertEmp(Emp ins);	
+인터페이스의 구성요소를 실제 객체를 만들기위해 연결 규칙을 선언해주면 실제 객체를 만들어 준다.
+EmpDao dao = new RealEmpDaoObj();
+
+class RealEmpDaoObj implements EmpDao{
+
+}
+-->	
+	<select id="getDetail" resultType="emp" parameterType="int">
+		select *
+		from emp01
+		where empno = #{empno}
+	</select>
+	<update id="updateEmp" parameterType="emp">
+		update emp01
+			set ename = # {ename},
+				job = #{job},
+				mge = #{mge},
+				hiredate = to_date(#{hiredate_s},'YYYY-MM-DD'),
+				sal = #{sal},
+				comm = #{comm},
+				deptno = #{deptno}
+		where empno = #{empno}
+	</update>
+	<delete id="deleteEmp" parameterType="int">
+		DELETE 
+		FROM emp01
+		WHERE empno=#{empno}
+	</delete>	
+
+</mapper>
+
+
+   

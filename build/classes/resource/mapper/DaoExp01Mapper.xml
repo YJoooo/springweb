@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="springweb.a02_mvc.a03_dao.DaoExp01">
+	<select id="getEmpCount" resultType="int">
+		select count(*)
+		from emp
+	</select>
+	<select id="getEmpsal" resultType="double">
+		SELECT sal
+		FROM emp
+		WHERE empno=7369
+	
+	</select>
+	<select id="getEmpsumsal" resultType="double">
+		SELECT sum(sal)
+		FROM emp
+		WHERE detpno=10
+	
+	</select>
+	<select id="getEmpjob" resultType="string">
+		SELECT job
+		from emp
+		where empno=7499
+	
+	</select>
+	<!-- public boolean hasEmp() -->
+	<select id="hasEmp" resultType="boolean">
+		select count(*)
+		from emp
+		where empno=7369
+	
+	</select>
+	<!-- public deptemp01 getDeptEmp();
+	deptemp01와 mapping 되어 있는 vo클래스에 
+	class DeptEmp01{
+		public void setDname(String dname);
+		public void setEname(String ename);
+		public void setSal(double sal);
+		public void setSal(String loc);
+	}
+	 -->
+	<select id="getDeptEmp" resultType="deptemp01">
+		SELECT dname, ename, sal, loc
+		FROM emp e, dept d
+		WHERE e.DEPTNO = d.DEPTNO 
+		AND empno=7369
+	</select>
+	<select id="">
+		Select *
+		from salgrade
+		where grade = 4	
+	</select>
+	<select id="getSalgrade" resultType="salgrade">
+		Select *
+		from salgrade
+		where grade = 4	
+	
+	</select>
+	<!-- 
+	public List<String> getEnames();
+			public List<Integer> getEmpnos();
+			public Double[] getSalaries()
+			
+			SELECT ename
+			FROM emp;
+			SELECT empno
+			FROM emp
+			WHERE deptno=10;
+			SELECT sal
+			FROM emp
+			WHERE job = 'SALESMAN';				
+	 -->
+	 <select id = "getEnames" resultType="string">
+	 	SELECT ename
+			FROM emp
+	 </select>
+	 <select id = "getEmpnos" resultType="int">
+	 	SELECT empno
+		FROM emp
+		WHERE deptno=10
+	 </select>
+	 <select id = "getSalaries" resultType="double">
+	 	SELECT sal
+		FROM emp
+		WHERE job = 'SALESMAN'
+	 </select>
+	 <select id="getJobs" resultType="string">
+					select job
+					from emp
+					where deptno=10
+	</select>	
+	<select id="getEmpList30" resultType="emp">
+				select *
+				from emp
+				where deptno = 30
+	</select>						
+	<!-- 
+	resultType의 가능한 변수 유형 :
+		int, double, string, 
+		boolean(DB - 0,1)
+	 -->
+	 <select id="getmaxdate" resultType="string">
+	    SELECT max(HIREDATE) 
+		FROM emp
+	 </select>
+	 <select id="getmaxsal" resultType="emp">
+		SELECT *
+		FROM emp
+		WHERE sal=(SELECT max(sal) 
+					FROM EMP
+					WHERE deptno=30)
+	 </select>
+	 <select id="getbetweensal" resultType="emp">
+	    SELECT * 
+		FROM emp
+		WHERE sal BETWEEN 1000 and 3000
+	 </select>
+	 <select id="getQdate" resultType="emp">
+	    SELECT empno, ename, to_char(hiredate,'Q')||'분기', HIREDATE 
+		FROM EMP
+		WHERE to_char(hiredate,'Q') = 1
+	 </select>
+	 <select id="getavgsal" resultType="emp">
+	    SELECT job, round(avg(sal),1)
+		FROM EMP
+		GROUP BY job
+	 </select>
+	 <select id="getEmpList" resultType="empq">
+	 	SELECT empno, ename, to_char(hiredate,'Q')||'분기', HIREDATE 
+		FROM EMP
+		WHERE to_char(hiredate,'Q') = 1;
+	 </select>
+<!-- 0711 -->	 
+	 <select id="getDetail" resultType="emp" parameterType="int">
+				select *
+				from emp
+				where empno = #{empno}
+	 </select>
+	 <delete id="deleteEmp" parameterType="string">
+				delete
+				from emp01
+				where job = #{job}
+	</delete>
+	<select id="getEmpJob" resultType="emp" parameterType="string">
+		SELECT*
+		FROM EMP01
+		WHERE job = #{job}		
+	</select>
+	<delete id = "deleteQua" parameterType="string">
+		DELETE
+		FROM EMP01
+		WHERE TO_CHAR(HIREDATE ,'Q')='2'	
+	</delete>
+	<select id = "getDeptMaxSal" resultType="deptMsal" parameterType="int">
+		SELECT deptno, max(sal) msal
+		FROM EMP01
+		WHERE deptno = #{deptno}
+		GROUP BY deptno
+	</select>
+	<select id="schEmpList02" resultType="emp" parameterType="emp">	
+		select * 
+		from emp01
+		where ename = #{ename}
+		and job = #{job}
+		and sal = #{sal}
+	</select>		
+	<insert id="insertEmp02" parameterType="emp">
+		insert into emp01(empno, ename, job)
+			values(#{empno},#{ename},#{job})
+	</insert>
+	<update id="updateEmp02" parameterType="emp">
+		update emp01
+		set ename = #{ename},
+			mgr = #{mgr},
+			sal = #{sal}
+		where empno = #{empno}
+	</update>
+	<insert id="insertDept" parameterType="dept">
+		insert into DEPT01 values(#{deptno},#{dname},#{loc})
+	</insert>
+	<select id="getEmpList2" resultType="emp" parameterType="hashMap">
+		select*
+		from emp
+		where 1=1
+		<if test="ename != null">
+		and ename like '%'||#{ename}||'%'
+		</if>
+		<if test="job != null">
+		and job like '%'||#{job}||'%'
+		</if>
+	</select>	
+	<select id="getDeptList" resultType="dept" parameterType="hashMap">
+		select *
+		from dept
+		where 1=1
+		<if test="dname != null">
+		and dname like '%'||#{dname}||'%'
+		</if>
+		<if test="loc !=null">
+		and loc like '%'||#{loc}||'%'
+		</if>
+	</select>
+	<select id="getAvgSalJob" resultType="emp" parameterType="string">
+		SELECT round(AVG(sal))
+		FROM emp
+		WHERE job =#{job}
+	</select>
+	<select id ="getSalSch" resultType="emp" parameterType="hashMap">
+		select *
+		from emp
+		where sal between #{start}and#{end}
+	</select>
+	<insert id="insertSalgrade" parameterType="salgrade">
+		INSERT INTO salgrade01 values(#{grade},#{losal},#{hisal})		
+	</insert>
+	<delete id="delEmp01" parameterType="int">
+		DELETE 
+		FROM emp01
+		WHERE empno=#{empno}
+	</delete>
+		
+	
+			
+	
+	
+	
+</mapper>
+
+
+   

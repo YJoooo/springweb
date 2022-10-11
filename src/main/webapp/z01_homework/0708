@@ -1,0 +1,113 @@
+2022-07-08
+[1단계:개념] 1. mybatis framework를 통해 데이터 베이스를 처리할려고 한다. 기본 환경 설정 구성을 예제를 통해서 기술하세요.
+	1) 컨테이너 설정(dispatcher-servlet.xml)
+		- 데이터베이스 연결에 필요한 공통 설정 정보 파일 선언
+		<context:property-placeholder location="classpath:resource\configure"/>
+		- 데이터베이스 연결 객체 선언
+		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+			destroy-method="close">
+			<property name="driverClassName" value="${jdbc.driver}"/>
+			<property name="url" value="${jdbc.url}"/>
+			<property name="username" value="${jdbc.user}"/>
+			<property name="password" value="${jdbc.pass}"/>
+		</bean>
+		
+		- 공통 mybatis 설정 파일 선언 : 개발자가 sql, 입력/리턴
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"/>
+			<property name="configLocation" value="classpath:resource/mybatis.Spring.xml"/>
+		</bean>
+		
+		- dao 인터페이스 폴드 선언 : 지정한 인터페이스 dao를 통해서 mybatis는 mapper.xml에서
+			실제 객체를 만들어 주기에 반드시 선언하여야 한다.
+		<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		 	<property name="basePackage" value="springweb.a02_mvc.a03_dao"/>
+		 </bean>
+			
+	2) 공통 mybatis 설정파일
+		- mapper 설정 파일 선언
+		<mappers>
+		- vo 지정
+		<typeAliases>
+[1단계:개념] 2. dao와 mapper의 연관관계를 설정하는 이유와 연관관계 설정 규칙을 기술하세요.
+dao -> 메서드 
+mapper -> 실행 sql
+mapper의 select name = dao 메서드명
+[1단계:확인] 3. 아래의 sql을 통해 처리되는 dao인터페이스 mapper.xml에 처리될 코드를 기술하세요.
+
+      1) 가장 최근에 입사한 사람의 입사일 = getmaxdate
+      	SELECT max(HIREDATE) 
+		FROM emp;
+		
+      2) 30번 부서 최고 급여자 사원정보 = getmaxsal
+      	SELECT *
+		FROM emp
+		WHERE sal=(SELECT max(sal) 
+					FROM EMP
+					WHERE deptno=30);
+      
+      3) 급여가 1000~3000사이의 사원명 = getbetweensal
+      	SELECT * 
+		FROM emp
+		WHERE sal BETWEEN 1000 and 3000;
+		
+      4) 1/4분기에 입사한 사람의 사원번호, 사원명, 분기명, 입사일 = getQdate
+      	SELECT empno, ename, to_char(hiredate,'Q')||'분기', HIREDATE 
+		FROM EMP
+		WHERE to_char(hiredate,'Q') = 1;
+		//문제풀이
+		1) sql
+		2) vo
+			private int empno;
+			private String ename;
+			private String div;
+			private Date hiredate;
+			
+		3) interface
+			public List<EmpQ> getEmplList();
+		4) 공통 mybatis xml : vo 등록
+			EmpQ==>empq
+			XXX.mapper.xml
+			<select id="getEmpList" resultType="empq">
+		5) service 단에서 테스트
+		
+      5) 직책별 평균 급여 정보(직책, 급여) = getavgsal
+      	SELECT job, round(avg(sal),1)
+		FROM EMP
+		GROUP BY job;
+		
+		 <select id="getmaxdate" resultType="string">
+	    SELECT max(HIREDATE) 
+		FROM emp
+	 </select>
+	 <select id="getmaxsal" resultType="emp">
+		SELECT *
+		FROM emp
+		WHERE sal=(SELECT max(sal) 
+					FROM EMP
+					WHERE deptno=30)
+	// mapper.xml				
+	 </select>
+	 <select id="getbetweensal" resultType="emp">
+	    SELECT * 
+		FROM emp
+		WHERE sal BETWEEN 1000 and 3000
+	 </select>
+	 <select id="getQdate" resultType="emp">
+	    SELECT empno, ename, to_char(hiredate,'Q')||'분기', HIREDATE 
+		FROM EMP
+		WHERE to_char(hiredate,'Q') = 1
+	 </select>
+	 <select id="getavgsal" resultType="emp">
+	    SELECT job, round(avg(sal),1)
+		FROM EMP
+		GROUP BY job
+	 </select>	
+	// dao
+	public List<Emp> getmaxdate();
+	public List<Emp> getmaxsal();
+	public List<Emp> getbetweensal();
+	public List<Emp> getQdate();
+	public List<Emp> getavgsal(); 
+      
+      

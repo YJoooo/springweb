@@ -1,0 +1,171 @@
+2022-07-14
+[1단계:개념] 1. jquery 환경설정 방법 2가지와 $(document).ready()의 의미를 기술하세요.
+	jquery 환경설정 방법 2가지
+	- cdn(content delivery network) 방식
+	- lib를 다운 받아서 처리하는 방식
+	$(document).ready(익명함수);의 의미
+		html화면이 전체 로딩되어 태그 등 DOM객체를 인식할 수 있는 상황이 되었을때, 처리 코드를 익명함수 적용하여 처리한다.
+		
+[1단계:개념] 2. jquery의 DOM 객체 선택자를 아이디, 태그, 클래스, form요소객체에 대하여 기술하세요.
+	id : $("#id")
+	tag : $("tag")
+	class: $(".class")
+	form : $("[name=name]")
+	
+	<script type="text/javascript">
+	   $(document).ready(function(){
+		   var hi01 = $("#hi01").html()
+		   alert("hi01"+hi01)
+		});
+	   $(document).ready(function(){
+		   var hi02 = $("#hi02").text()
+		   alert("hi02"+hi02)
+		});
+	   $(document).ready(function(){
+		   var hi03 = $("#hi03").val()
+		   alert("hi03"+hi03)
+		});
+	</script>
+	</head>
+	
+	<body>
+	<div style="text-align:center">
+	<h2 id="hi01">안녕하세요1</h2>
+	<h2 id="hi02">안녕하세요2</h2>
+	<input id="hi03" type="text" value="안녕하세요3">
+	</div>	
+
+[1단계:개념] 3. jquery의 text(), html(), val()의 차이점을 예제를 통해 기술하세요
+	text() : 셀렉터 하위에 있는 문자열만 가져온다.input태그에 사용할수 없다.
+	html() : 셀렉터 하위에 있는 태그나 문자열을 가져온다.
+	val() : input태그에 정의된 value속성값을 가져온다.
+	
+	
+[1단계:개념] 4. jquery의 attr(), css()차이점을 예제를 통해 기술하세요
+	새로운 스타일을 지정할 경우 attr는 기존에 가지고 있던 값들이 모두 삭제되고, 새로운 값으로 스타일이 나타남
+	css를 사용하면 기존의 값은 유지되면서 새로운 값만 추가하거나 변경할수 있다.
+	
+		<script type="text/javascript">
+		   $(document).ready(function(){
+			$("h1").click(function(){
+			 	  $("h2").eq(0).attr("background-color","pink").text("attr변경");
+				  $("h2").eq(1).css("background-color","lightyellow").text("css변경");
+				  $("h2").eq(2).css("align","left").text("css변경");
+				  $("h2").eq(3).attr("align","left").text("attr변경");
+			 });
+			});
+		</script>
+		</head>
+		
+		<body>
+		<div style="text-align:center">
+		<h1>클릭</h1>
+		<h2>안녕하세요</h2>
+		<h2>안녕하세요</h2>
+		<h2>안녕하세요</h2>
+		<h2>안녕하세요</h2>
+		</div>
+		</body>	
+		
+		==> attr("background-color","pink") 변경안됨 (실행X)
+			css("background-color","lightyellow") 변경됨 (기존의 값없어서 새로운값나타남)
+			css("align","left") 변경안됨 (기존의 값유지)
+			attr("align","left") 변경됨 (새로운값으로 나타남)
+[1단계:개념] 5. 익명함수로 이벤트의 처리 방법을 기술하세요.
+	$("이벤트 처리할 부분").이벤트( function() {
+            처리할 내용
+        });
+[1단계:확인] 6. jquery로 물건가격[  ] 구매갯수[  ] 입력 후, enter처리시 총비용 하단에 출력되게 하세요.
+	<script type="text/javascript">
+	   $(document).ready(function(){
+		$(".product").keyup(function(){
+			if(event.keyCode==13){
+				var pname=$("#pname").val()
+				var cnt=$("#cnt").val()
+				$("span").text("총비용:"+(pname*cnt))
+			}
+		});
+	   });
+	</script>
+	</head>
+	
+	<body>
+	<div style="text-align:center">
+	  <h2>타이틀</h2>
+	  물건가격 : <input class="product" id="pname" size="2">
+	  구매갯수 : <input class="product" id="cnt" size="2"><br>
+	  <span></span>
+	</div>
+	</body>
+[1단계:확인] 7. [rainbow 색상] 클릭시, 하단에 있는 h3 7개의 배경색상이 출력되게 처리하세요'
+	<script type="text/javascript">
+	   $(document).ready(function(){
+			$("#rainbow").click(function(){
+				$("#red").css("background-color","red")
+				$("#orange").css("background-color","orange")
+				$("#yellow").css("background-color","yellow")
+				$("#green").css("background-color","green")
+				$("#blue").css("background-color","blue")
+				$("#navy").css("background-color","navy")
+				$("#purple").css("background-color","purple")
+			});
+	   });
+	</script>
+	</head>
+	
+	<body>
+	<div style="text-align:center">
+	<input type="button" id="rainbow" value="rainbow 색상">
+	<h3 id="red">빨</h3>
+	<h3 id="orange">주</h3>
+	<h3 id="yellow">노</h3>
+	<h3 id="green">초</h3>
+	<h3 id="blue">파</h3>
+	<h3 id="navy">남</h3>
+	<h3 id="purple">보</h3>
+	</div>
+	</body>
+	
+[1단계:확인] 8. json 형식으로 운동선수이름, 팀, 성적을 선언하고, [성적표시] 클릭시, 테이블에 데이터가 출력되게 하세요
+	<script type="text/javascript">
+	   $(document).ready(function(){
+		   var player = {name:"김광현",team:"SSG",point:"2",
+			playerinfo:function(){
+				$("td").eq(0).text(this.name)
+				$("td").eq(1).text(this.team)
+				$("td").eq(2).text(this.point)
+			}}
+		   $("#put").click(function(){
+			   player.playerinfo()
+		   });
+	
+	   });
+	   // 8. json 형식으로 운동선수이름, 팀, 성적을 선언하고, [성적표시] 클릭시, 테이블에 데이터가 출력되게 하세요
+	</script>
+	</head>
+	
+	<body>
+	<div style="text-align:center">
+	<h2>선수정보</h2>
+	<input id="put" type="button" value="성적표시">
+	<table align="center" width="200" height ="200" border>
+	<col width="33%"><col width="33%"><col width="33%">
+		<tr><th>이름</th><th>팀</th><th>성적</th></tr>
+		<tr><td></td><td></td><td></td></tr>
+	</table>
+	</div>
+	</body>	
+
+
+
+
+
+
+
+
+
+
+
+
+
+

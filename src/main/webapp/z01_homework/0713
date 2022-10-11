@@ -1,0 +1,244 @@
+2022-07-13
+[1단계:개념] 1. 게시판의 상세화면 처리 프로세스를 기술하고, 각 내용의 핵심 코드를 기술하세요.
+	1. sql
+	select * from board where no = #{no}
+	update board
+ 		set readcnt = readcnt+1
+	where no = #{no}
+ 	2. vo 확인
+	3. dao/mapper : 
+		public Board getBoardDetail(int no);
+		public void readCountup(int no);
+	4. service
+		public Board getBoardDetail(int no){
+			dao.readCountup(no);
+
+			return dao.getBoardDetail(no);
+		}
+	5. view단
+		<tr ondbclick="goDetail(${board.no})">
+		function goDetail(no){
+			location.href="${path}/boardDetail.do?no="+no;
+		}
+	6. controller
+		@RequestMapping("boardDetail.do")
+		public String boardDetail(@RequestParam("no") int no, Model d){
+			d.addAttribute("board", service.getBoardDetail(no));
+			return "상세화면 jsp 페이지";
+		}
+	7. view
+		<input name="no" value="${board.no}">
+		<input name="subject" value="${board.subject}">
+		<input name="writer" value="${board.writer}">
+		<textarea name="content">${board.content}</textarea>
+		<input name="regdte" value="${board.regdte}">
+		<input name="uptdte" value="${board.uptdte}">
+
+	# 수정 삭제
+ 	1. sql 작성
+		UPDATE board011
+			SET subject = #{subject},
+				content = #{content},
+				uptdte = sysdate
+		WHERE NO = #{no}
+		                    
+		DELETE
+		form board011
+		WHERE NO = #{no}
+	2. vo 확인 : board
+	3. dao 기능메서드
+		public void updateBoard(Board upt);
+		public void deleteBoard(int no);
+	4. mapper 추가
+		<update id="updateBoard" parameterType="board">
+			UPDATE board011
+				SET subject = #{subject},
+					content = #{content},
+					uptdte = sysdate
+			WHERE NO = #{no}
+		</update>
+		<delete id="deleteBoard" parameterType="int">
+			DELETE
+			form board011
+			WHERE NO = #{no}
+		</delete>
+	5. service 기능 추가.
+	6. 뷰(jsp)수정 처리 ui
+			수정버튼 : <Button type="button" onclick="updateProc()">수정</Button>
+			삭제버튼 : <Button type="button" onclick="deleteProct()">삭제</Button>
+			답글버튼 : <Button type="button" onclick="replyProc()">답글</Button>
+		function updateProc(){
+			if(confirm("수정하시겠습니끼?")){
+			// 유효성 check
+				$("form").attr("action","${path}/boardUpdate.do");
+				$("form").submit();
+			}
+		}
+		function deleteProct(){
+			if(confirm("삭제하시겠습니까?")){
+				$("form").attr("action","${path}/boardDelete.do");
+				$("form").submit();
+			}
+		}
+
+	7. 수정 처리 controller
+		@RequestMapping("updateBoard.do")
+		public String updateBoard(Board upt, Model d) {
+			System.out.println("수정:"+upt.getSubject());
+			d.addAttribute("board",service.updateBoard(upt));
+			d.addAttribute("proc","upt");
+			return "WEB-INF/views/a03_boardDetail.jsp";
+		}
+		 @RequestMapping("deleteBoard.do")
+		public String deleteBoard(@RequestParam("no") int no, Model d) {
+			System.out.println("삭제:"+no);
+			d.addAttribute("proc","del");
+			return "WEB-INF/views/a03_boardDetail.jsp";
+		}
+	8. service
+		public Board updateBoard(Board upt){
+		dao.updateBoard(upt);
+		return dao.detailBoard(upt.getEmpno());
+		}
+	9. 뷰(jsp) 수정 처리후 처리
+ 		var proc = "${proc}"
+		if(proc=="upt"){
+			if(confirm("수정성공\n조회리스트 화면으로 이동하시겠습니까?")){
+				location.href="${path}/boardList.do";
+			}
+		}
+		if(proc=="del"){
+			alert("삭제성공\n조회 리스트화면으로 이동")
+			location.href="${path}/boardList.do";
+		}
+
+[1단계:개념] 2. 게시판의 수정/삭제를 구분하는 js 코드는 무엇인가?
+	var proc = "${proc}"
+	if(proc=="upt"){
+		if(confirm("수정성공\n조회리스트 화면으로 이동하시겠습니까?")){
+			location.href="${path}/boardList.do";
+		}
+	}
+	if(proc=="del"){
+		alert("삭제성공\n조회 리스트화면으로 이동")
+		location.href="${path}/boardList.do";
+	}
+[1단계:확인] 3. 오늘한 게시판 상세조회에서 수정삭제와 같이 사원리스트 기준으로 
+      기존 dao(DaoExp01)를 이용하여 spring에서 상세조회수정삭제하세요.
+      public Emp getDetail(int empno);
+      public void updateEmp02(Emp upt);
+      public void deleteEmp(int empno); 
+      - mapper
+      	<delete id="delEmp01" parameterType="int">
+			DELETE 
+			FROM emp01
+			WHERE empno=#{empno}
+		</delete>
+1. DB 처리 
+	1) sql
+		delete from emp01 where empno=#{empno}
+	2) vo 확인 : emp
+	3) dao
+		public void deleteEmp(int empno);
+	4) mapper
+		<select id="getDetail" resultType="emp" parameterType="int">
+			select *
+			from emp01
+			where empno = #{empno}
+		</select>
+		<update id="updateEmp" parameterType="emp">
+			update emp01
+				set ename = # {ename},
+					job = #{job},
+					mge = #{mge},
+					hiredate = to_date(#{hiredate_s},'YYYY-MM-DD'),
+					sal = #{sal},
+					comm = #{comm},
+					deptno = #{deptno}
+			where empno = #{empno}
+		</update>
+		<delete id="delEmp01" parameterType="int">
+			DELETE 
+			FROM emp01
+			WHERE empno=#{empno}
+		</delete>
+2. java(backend)
+	1) service
+	public Emp getDetail(int empno){
+		return dao.getDetail(emono);
+	}
+	public void updateEmp(Emp upt){
+		dao.updateEmp02(upt);
+	}
+	public void deleteEmp(int empno){
+		dao.deleteEmp01(empno)
+	}		
+	2) controller
+	 @RequestMapping("emp.do") // 이 컨트롤에 공통된 방식 선언.
+	 class EmpController
+	 // http://localhost:7080/springweb/emp.do?method=list
+	 @RequestMapping(params="method=list")
+	 
+	 // http://localhost:7080/springweb/emp.do?method=detail&empno7496
+	 @RequestMapping(params="method=detail")
+	 public String detail(@RequestParam("no") int empno, Model d){
+	 	d.addAttribute("emp", service.getDetail(empno));
+	 	return"WEB-INF\views\a02_mvc\a06_empDetail.jsp";
+	 }	
+	 // http://localhost:7080/springweb/emp.do?method=update
+	 @RequestMapping(params="method=update")
+	 public String update(Emp upt, Model d){
+		 	service.updateEmp02(upt);
+		 	d.addAttribute("emp", service.getDetail(empno));
+		 	d.addAttrivute("proc","upt");
+	 	return "WEB-INF\views\a02_mvc\a06_empDetail.jsp";
+	 }	
+	 // http://localhost:7080/springweb/emp.do?method=delete
+	 @RequestMapping(params="method=delete")
+	 public String delete(@RequestParam("empno") int empno,Model d){
+		 	d.addAtrivute("proc","del");
+	 	return"WEB-INF\views\a02_mvc\a06_empDetail.jsp";
+	 }
+	 
+3. jsp(frontend) WEB-INF\views\a02_mvc\a06_empDetail.jsp
+	1) 화면단
+	<input name="empno" value="${emp.empno}" readonly>
+	2) js
+		- 기능별 처리
+		function updateProc(){
+			if(confirm("수정하시겠습니까")){
+				$("form").attr("action","$(path}/emp.do?method=update");
+				$("form").submit();
+			}
+		}
+		function deleteProc(){
+			var no = $("[name=empno]").val()
+			if(confirm("삭제하시겠습니까?"){
+				location.href="${path}/emp.do?method=delete?empno="+empno;
+			}
+		}
+		- 처리 후, proc
+		var proc = "${proc}"
+		if(proc=="upt"){
+			if(confirm("수정완료!\n조회화면으로 이동하시겠습니까?")){
+				location.href="${path}/emp.do?method=list";
+			}
+		}
+		if(proc=="del"){
+			alert("삭제완료\n조회화면으로 이동합니다.");
+			location.href="${path}/emp.do?method=delete?empno="+$("[name=empno]").val();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
